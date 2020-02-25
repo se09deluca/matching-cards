@@ -1,0 +1,20 @@
+{
+  "name": "matching-cards",
+  "version": "1.0.0",
+  "description": "Matching Cards is a memory game developed by Andrea De Luca as project for the Frontend Language course of MWT 12 edition.",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack --config webpack.config.js --watch"
+  },
+  "keywords": [],
+  "author": "Andrea De Luca",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^3.4.2",
+    "file-loader": "^5.0.2",
+    "style-loader": "^1.1.3",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}

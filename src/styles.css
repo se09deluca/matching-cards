@@ -1,0 +1,125 @@
+/* The flip box container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-box {
+    background-color: transparent;
+    width: 300px;
+    height: 200px;
+    perspective: 1000px; /* Remove this if you don't want the 3D effect */
+    position: relative;
+    min-height: 245px;
+    min-width: 165px;
+    max-height: 245px;
+    max-width: 165px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    /*border: 1px solid #42302a;*/
+    margin: 8px;
+    border-radius: 6px;
+    /*box-shadow: 0 1px 6px 0 #000000d4*/
+
+}
+
+/* This container is needed to position the front and back side */
+.flip-box-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    border-radius: 6px;
+}
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip {
+    transform: rotateY(180deg);
+}
+
+/* Position the front and back side */
+.flip-box-back, .flip-box-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+    border-radius: 6px;
+}
+
+/* Style the front side (fallback if image is missing) */
+.flip-box-back {
+    color: black;
+}
+
+/* Style the back side */
+.flip-box-front {
+    transform: rotateY(180deg);
+}
+
+
+
+
+.ribbon-wrapper {
+    height: 70px;
+    overflow: hidden;
+    position: absolute;
+    right: -2px;
+    top: -2px;
+    width: 70px;
+    z-index: 10;
+}
+.ribbon-wrapper.ribbon-lg {
+    height: 120px;
+    width: 120px;
+}
+
+
+.fade-out {
+    animation: fadeOut ease 1s;
+    -webkit-animation: fadeOut ease 1s;
+    -moz-animation: fadeOut ease 1s;
+    -o-animation: fadeOut ease 1s;
+    -ms-animation: fadeOut ease 1s;
+}
+@keyframes fadeOut {
+    0% {
+        opacity:1;
+    }
+    100% {
+        opacity:0;
+    }
+}
+
+@-moz-keyframes fadeOut {
+    0% {
+        opacity:1;
+    }
+    100% {
+        opacity:0;
+    }
+}
+
+@-webkit-keyframes fadeOut {
+    0% {
+        opacity:1;
+    }
+    100% {
+        opacity:0;
+    }
+}
+
+@-o-keyframes fadeOut {
+    0% {
+        opacity:1;
+    }
+    100% {
+        opacity:0;
+    }
+}
+
+@-ms-keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

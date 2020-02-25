@@ -1,0 +1,4 @@
+# IntelliJ IDE config
+.idea
+# Node Dependencies
+/node_modules

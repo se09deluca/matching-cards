@@ -1,5 +1,4 @@
 import backCard from './assets/images/back-card.jpg'
-import backCardChecked from './assets/images/back-card-checked.jpg'
 import { setStyle } from './utils'
 
 const FRONT_FACE = 'FRONT_FACE';

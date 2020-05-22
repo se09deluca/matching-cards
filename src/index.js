@@ -1,7 +1,7 @@
-import GameManager from './GameManager'
-import { getAllMatches, imageDictionary, setStyle, shuffle } from './utils'
-import tableBackgroundImage from '../src/assets/images/table-bg.jpg'
-import '../src/styles.css'
+import GameManager from './GameManager';
+import { getAllMatches, setStyle } from './utils';
+import tableBackgroundImage from '../src/assets/images/table-bg.jpg';
+import '../src/styles.css';
 
 function generateHeader (container) {
 

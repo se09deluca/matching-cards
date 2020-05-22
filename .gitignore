@@ -1,4 +1,12 @@
-# IntelliJ IDE config
-.idea
 # Node Dependencies
 /node_modules
+
+# IntelliJ IDE config
+.idea
+
+# OS X
+.DS_STORE
+
+# compiled dist files
+/dist/*
+/dist/!index.html

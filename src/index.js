@@ -1,253 +1,125 @@
-import GameManager from './GameManager';
-import { getAllMatches, setStyle } from './utils';
+import GameManager, {CARD_POINTS, TIME_POINTS} from './GameManager';
+import {
+    colorPalette,
+    createInput,
+    createRadioInput,
+    dashboardStyle,
+    defaultBoxStyle,
+    fontFamily,
+    getAllMatches,
+    setStyle,
+    tableStyle
+} from './utils';
 import tableBackgroundImage from '../src/assets/images/table-bg.jpg';
 import '../src/styles.css';
 
-function generateHeader (container) {
-
-    setStyle(container, {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        margin: '25px 4vw',
-        padding: '20px'
-    });
-
-    let defaultBoxStyle = {
-        padding: '20px',
-        background: 'linear-gradient(rgb(193, 203, 212), rgb(119, 128, 136)) repeat-x rgb(108, 117, 125)',
-        border: "2px solid rebeccapurple",
-        borderRadius: '10px',
-        boxShadow: '#000000ab 0px 3px 6px 1px',
-        minWidth: '15vw'
-    };
-
-    let infoBox = document.createElement('div');
-    let scoreBox = document.createElement('div');
-    let timerBox = document.createElement('div');
-
-    setStyle(infoBox, {
-        ...defaultBoxStyle,
-
-    });
-    setStyle(scoreBox, {
-        ...defaultBoxStyle,
-
-    });
-    setStyle(timerBox, {
-        ...defaultBoxStyle,
-
-    });
-
-    container.appendChild(infoBox);
-    container.appendChild(scoreBox);
-    container.appendChild(timerBox);
-
-
-    // INFO BOX
-
-    let title = document.createElement('h1');
-    setStyle(title, {
-        marginTop: '0',
-        fontSize: '32px'
-    });
-    title.innerHTML = `Memory game`;
-
-    let subtitle = document.createElement('p');
-    subtitle.innerHTML = `Memory game`;
-
-    infoBox.appendChild(title);
-    infoBox.appendChild(subtitle);
-
-
-
-    // SCORE
-
-    let score = 0;
-
-    let scoreTitle = document.createElement('h3');
-    setStyle(scoreTitle, {
-        marginTop: '5px'
-    });
-
-    scoreTitle.innerHTML = `Punteggio: <span id="score"></span>`;
-
-    scoreBox.appendChild(scoreTitle);
-
-    let scoreValueComponent = document.getElementById('score');
-
-    function setScore(score) { scoreValueComponent.innerText = score.toString(); }
-    setScore(0);
-
-    function decrementScore() {
-        setScore(--score);
-    }
-
-    function incrementScore() {
-        setScore(++score);
-    }
-
-
-
-    let remainingCardsTitle = document.createElement('h4');
-    setStyle(remainingCardsTitle, {
-        marginTop: '5px',
-        display: 'none'
-    });
-
-    remainingCardsTitle.innerHTML = `Carte restanti: <span id="remainingCards"></span>`;
-
-    scoreBox.appendChild(remainingCardsTitle);
-
-    let remainingCardsComponent = document.getElementById('remainingCards');
-
-    function setRemainingCards(cardsNumber) {
-        remainingCardsComponent.innerText = cardsNumber.toString();
-        setStyle(remainingCardsTitle, { display: 'block' })
-    }
-
-
-    let scoreHandler = {
-        score,
-        incrementScore,
-        decrementScore,
-        setRemainingCards
-    }
-
-
-
-    // TIMER
-
-    let timerTitle = document.createElement('h3');
-    setStyle(timerTitle, {
-        marginTop: '5px'
-    });
-    timerTitle.innerHTML = `Tempo:&nbsp;&nbsp;&nbsp;&nbsp;<span id="timer"></span>`;
-
-    timerBox.appendChild(timerTitle);
-
-    let timerValue = document.getElementById('timer');
-
-    let time = 0;
-    let timer;
-
-    function setTime() { timerValue.innerText = time.toString(); }
-    setTime(0);
-
-    const startTimer = function () {
-
-        time = 0;
-        setTime();
-
-        timer = setInterval(
-            () => {
-                time++;
-                setTime();
-            }, 1000);
-
-    }
-
-    const stopTimer = function () {
-
-        clearInterval(timer);
-    }
-
-    let timerHandler = {
-        time,
-        startTimer,
-        stopTimer
-    }
-
-
-
-    // LAST MATCH
-    const showLastMatchBox = () => {
-
-        let lastMatchBox = document.createElement('div');
-
-        let lastGamesHeading = document.createElement('h3');
-        setStyle(lastGamesHeading, {
-            marginTop: '5px'
-        });
-        lastGamesHeading.innerHTML = `Partite recenti:`;
-        lastMatchBox.appendChild(lastGamesHeading);
-
-        let lastMatchContainer = document.createElement('div');
-        setStyle(lastMatchContainer, {
-            maxHeight: "150px",
-            overflowY: 'scroll',
-            paddingRight: '1em'
-        });
-
-        let unorderedList = document.createElement('ul');
-        setStyle(unorderedList, {
-            marginTop: '0',
-            paddingLeft: '20px'
-        });
-
-        for(let match of lastMatches) {
-
-            let playerDetailItem = document.createElement('li');
-            playerDetailItem.innerHTML = `<b>Giocatore:</b> ${match.player}`;
-
-            let matchDetailItem = document.createElement('ul');
-
-            let pointsDetail = document.createElement('li');
-            pointsDetail.innerHTML = `<b>Punti:</b>    ${match.points}`;
-
-            let dateDetail = document.createElement('li');
-            dateDetail.innerHTML = `<b>Data:</b>&nbsp;${new Date(match.date).toLocaleString('it', { dateStyle: "medium", timeStyle: "short" })}`;
-
-            setStyle(matchDetailItem, {
-                paddingLeft: '25px',
-                marginBottom: '15px'
-            });
-
-            setStyle(pointsDetail, {
-                fontSize: '13px'
-            });
-            setStyle(dateDetail, {
-                fontSize: '13px'
-            });
-            matchDetailItem.appendChild(pointsDetail);
-            matchDetailItem.appendChild(dateDetail);
-
-            unorderedList.appendChild(playerDetailItem);
-            unorderedList.appendChild(matchDetailItem);
-        }
-
-        lastMatchContainer.appendChild(unorderedList);
-
-        lastMatchBox.appendChild(lastMatchContainer);
-
-        setStyle(lastMatchBox, {
-            ...defaultBoxStyle,
-
-        });
-
-        container.appendChild(lastMatchBox);
-    }
-
-    let lastMatches;
-    lastMatches = getAllMatches();
-
-    if(lastMatches) {
-        showLastMatchBox();
-    }
-
-    return {
-        scoreHandler,
-        timerHandler
-    };
-
-}
-
 const onLoadListener = () => {
 
+    setStyle(document.body,{ backgroundImage: `url(${ tableBackgroundImage })` });
+
     let container = document.getElementById('root');
-    setStyle(document.body,{  backgroundImage: `url(${ tableBackgroundImage })` });
+    setStyle(container,{ display: 'flex', justifyContent: 'center', fontFamily });
+
+    let gameFormContainer = document.createElement('div');
+    setStyle(gameFormContainer, { ...defaultBoxStyle, width: '40vw' });
+
+    let startGameForm = document.createElement('form');
+    startGameForm.onsubmit = function (ev) {
+        ev.preventDefault();
+
+        this.elements['level'].value
+        let result = {};
+        for(let element of [ 'username', 'cardsNumber', 'level' ]) {
+            console.log(element)
+            result[element] = this.elements[element].value;
+        }
+
+        let { username, cardsNumber, level } = result;
+
+        startGame({ username, cardsNumber, level });
+    };
+
+
+
+    let title = document.createElement('h1');
+    title.innerText = "Matching cards";
+
+    let infoTitle = document.createElement('span');
+    setStyle(infoTitle, {
+        fontSize: '18px',
+        fontWeight: 'bold'
+    });
+    infoTitle.innerText = "Istruzioni";
+
+    let info = document.createElement('p');
+    info.innerText = "Matching cards è un memory game in cui l'obiettivo è essere il più veloce possibile. Scala la classifica grazie alla tua memoria visiva.!"
+
+    let divider = document.createElement('hr');
+    setStyle(divider, { borderColor: colorPalette.primary });
+    let breakline = document.createElement('br');
+    let breakline2 = document.createElement('br');
+    setStyle(breakline2, { margin: '8px 0' });
+
+    gameFormContainer.append(title, infoTitle, info, divider);
+
+    // Form inputs
+    let configSectionLabel = document.createElement('p');
+    setStyle(configSectionLabel, { fontWeight: 'bold' });
+    configSectionLabel.innerText = 'Configura la tua partita';
+
+
+    // Field: username
+    let usernameLabel = document.createElement('label');
+    usernameLabel.setAttribute('for', 'cardsNumber');
+    usernameLabel.innerText = "Nome giocatore: ";
+    setStyle(usernameLabel, { marginRight: '12px' });
+    let usernameField = createInput({ name: 'username', required: true });
+
+    // Field: cards number
+    let numCardsLabel = document.createElement('label');
+    numCardsLabel.setAttribute('for', 'cardsNumber');
+    numCardsLabel.innerText = "Numero di carte: ";
+    setStyle(numCardsLabel, { marginRight: '12px' });
+    let numCardsField = createInput({ name: 'cardsNumber', type: 'number', min: 2, max: 21, required: true });
+
+    // Field: level select
+    let levelRadioLabel = document.createElement('label');
+    levelRadioLabel.setAttribute('for', 'level');
+    levelRadioLabel.innerText = "Livello: ";
+    setStyle(levelRadioLabel, { marginRight: '12px' });
+    let levelRadios = createRadioInput({ name: 'level', type: 'radio', required: true }, [ 'EASY', 'NORMAL', 'HARD' ]);
+
+    let levelRadioFieldCtr = document.createElement('div');
+    setStyle(levelRadioFieldCtr, { display: 'flex', margin: '8px 0' });
+    levelRadioFieldCtr.append(levelRadioLabel, ...levelRadios);
+
+    // Submit button
+    let submit = createInput({ type: 'submit', value: "INIZIA!" });
+
+
+
+
+    startGameForm.append(
+        configSectionLabel,
+        usernameLabel, usernameField,
+        breakline,
+        numCardsLabel, numCardsField,
+        breakline2,
+        levelRadioFieldCtr,
+        submit
+    );
+
+
+    gameFormContainer.appendChild(startGameForm);
+
+    container.appendChild(gameFormContainer);
+
+};
+
+function startGame(gameConfig) {
+
+    let container = document.getElementById('root');
+    container.innerHTML = '';
 
     setStyle(container, {
         position: 'fixed',
@@ -255,14 +127,198 @@ const onLoadListener = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        overflow: 'scroll',
-        fontFamily: 'MontSerrat'
+        overflow: 'scroll'
     });
 
 
     let dashboard = document.createElement('div');
 
     container.appendChild(dashboard);
+
+
+    function generateHeader () {
+
+        setStyle(dashboard, dashboardStyle);
+
+        let infoBox = document.createElement('div');
+        let scoreBox = document.createElement('div');
+        let lastMatchBox = document.createElement('div');
+
+        setStyle(infoBox, defaultBoxStyle);
+        setStyle(scoreBox, defaultBoxStyle);
+        setStyle(lastMatchBox, { display: 'flex' });
+
+        dashboard.appendChild(infoBox);
+        dashboard.appendChild(scoreBox);
+
+
+        // INFO BOX
+
+        let title = document.createElement('h2');
+        setStyle(title, {
+            marginTop: '0',
+            fontSize: '28px'
+        });
+        title.innerHTML = `Ciao ${ gameConfig.username }!`;
+
+        let subtitle = document.createElement('p');
+        subtitle.innerHTML = `Benvenuto nel memory game, cerca di battere il record accoppiando tutte le carte nel minor tempo possibile!<br/>Il timer inizia al tocco della prima carta.<br/><br/>Buona fortuna!`;
+
+        infoBox.appendChild(title);
+        infoBox.appendChild(subtitle);
+
+
+
+        // SCORE
+
+        let score = 0;
+
+        let scoreTitle = document.createElement('span');
+        setStyle(scoreTitle, { fontSize: 18, fontWeight: 'bold', marginTop: '5px' });
+
+        scoreTitle.innerHTML = `Punteggio: <span id="score"></span>`;
+
+        scoreBox.appendChild(scoreTitle);
+
+        let scoreValueComponent = document.getElementById('score');
+
+        function setScore(score) { scoreValueComponent.innerText = score.toString(); }
+        setScore(0);
+
+        function decrementScore() { setScore(--score); }
+
+        function incrementScore() { setScore(++score); }
+
+        let remainingCardsTitle = document.createElement('span');
+        setStyle(remainingCardsTitle, { float: 'right', display: 'none', fontSize: 18, fontWeight: 'bold', marginTop: '5px' });
+        remainingCardsTitle.innerHTML = `Carte restanti: <span id="remainingCards"></span>`;
+
+        let pointsLegend = document.createElement('p');
+        pointsLegend.innerHTML = `Ogni coppia di carte vale ${ CARD_POINTS } punti.<br/>Ma affrettati, ogni secondo ti costa ${ TIME_POINTS } punti!`;
+
+        scoreBox.append(remainingCardsTitle, pointsLegend);
+
+        let remainingCardsComponent = document.getElementById('remainingCards');
+        function setRemainingCards(cardsNumber) {
+            remainingCardsComponent.innerText = cardsNumber.toString();
+            setStyle(remainingCardsTitle, { display: 'block' })
+        }
+
+        const scoreHandler = {
+            score,
+            incrementScore,
+            setRemainingCards
+        }
+
+
+        let divider = document.createElement('hr');
+        setStyle(divider, { borderColor: colorPalette.primary, margin: '10px 0px' });
+
+        // TIMER
+
+        let timerTitle = document.createElement('span');
+        setStyle(timerTitle, { fontSize: '16px', marginTop: '5px' });
+        timerTitle.innerHTML = `Tempo:&nbsp;&nbsp;&nbsp;&nbsp;<span id="timer"></span>`;
+
+        scoreBox.append( divider, timerTitle);
+
+        let timerValue = document.getElementById('timer');
+
+        function setTime(remainingTime = 0) {
+            timerValue.innerText = remainingTime.toString();
+        }
+        setTime();
+
+
+        const timerHandler = {
+            setTime
+        }
+
+
+
+        // LAST MATCH
+        const generateLastMatchBox = () => {
+
+            let lastMatchContent = document.createElement('div');
+            setStyle(lastMatchContent, { ...defaultBoxStyle, flexDirection: 'column' });
+
+            let lastGamesHeading = document.createElement('h3');
+            setStyle(lastGamesHeading, { marginTop: '5px' });
+
+            let lastMatchContainer = document.createElement('div');
+            setStyle(lastMatchContainer, {
+                overflowY: 'scroll',
+                paddingRight: '1em'
+            });
+
+            let unorderedList = document.createElement('ul');
+            setStyle(unorderedList, {
+                marginTop: '0',
+                paddingLeft: '20px'
+            });
+
+
+            let lastMatches;
+            lastMatches = getAllMatches();
+
+            if(lastMatches) {
+
+                dashboard.appendChild(lastMatchBox);
+
+                lastGamesHeading.innerHTML = `Partite recenti:`;
+                lastMatchContent.appendChild(lastGamesHeading);
+
+                for (let match of lastMatches) {
+
+                    let playerDetailItem = document.createElement('li');
+                    playerDetailItem.innerHTML = `<b>Giocatore:</b> ${match.player}`;
+
+                    let matchDetailItem = document.createElement('ul');
+
+                    let pointsDetail = document.createElement('li');
+                    pointsDetail.innerHTML = `<b>Punti:</b>    ${match.points}`;
+
+                    let dateDetail = document.createElement('li');
+                    dateDetail.innerHTML = `<b>Data:</b>&nbsp;${new Date(match.date).toLocaleString('it', {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                    })}`;
+
+                    setStyle(matchDetailItem, {
+                        paddingLeft: '25px',
+                        marginBottom: '15px'
+                    });
+
+                    setStyle(pointsDetail, { fontSize: '13px' });
+                    setStyle(dateDetail, { fontSize: '13px' });
+                    matchDetailItem.append(pointsDetail, dateDetail);
+
+                    unorderedList.append(playerDetailItem, matchDetailItem);
+                }
+            } else {
+                let playerDetailItem = document.createElement('li');
+                playerDetailItem.innerHTML = `Nessuna partita. Vinci la tua prima partita per entrare in classifica!`;
+                unorderedList.append();
+            }
+
+            lastMatchContainer.appendChild(unorderedList);
+
+            lastMatchContent.appendChild(lastMatchContainer);
+
+
+            lastMatchBox.innerHTML = "";
+            lastMatchBox.appendChild(lastMatchContent);
+        }
+        generateLastMatchBox();
+
+
+        return {
+            scoreHandler,
+            timerHandler,
+            generateLastMatchBox
+        };
+
+    }
 
     let header = generateHeader(dashboard);
 
@@ -275,25 +331,15 @@ const onLoadListener = () => {
 
 
     let table = document.createElement('div');
-    setStyle(table, {
-        position: 'relative',
-        width: 'auto',
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignSelf: "stretch",
-        margin: '25px 4vw',
-        padding: '15px',
-    });
+    setStyle(table, tableStyle);
     container.appendChild(table);
 
 
-    let gameManager = new GameManager(table, header);
+    let gameManager = new GameManager(table, header, gameConfig);
 
-    gameManager.initTable(6);
+    gameManager.play();
 
-};
+}
 
 window.addEventListener(
     'load',

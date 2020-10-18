@@ -41,14 +41,121 @@ export const imageDictionary = {
     "card-17": cardImage17,
     "card-18": cardImage18,
     "card-19": cardImage19,
-    "card-20": cardImage20,
+    "card-20": cardImage20
 };
+
+export const colorPalette = {
+    primary: '#7230b3',
+    accent: '#ca04ca',
+    light: '#f3d6ff',
+    lighter: '#d3d3d3'
+}
+
+export const fontFamily = 'Rubik';
 
 export const setStyle = (elem, style) => {
     for(let property in style) {
         elem.style[property] = style[property];
     }
 };
+
+export const defaultBoxStyle = {
+    padding: '20px',
+    marginBottom: '20px',
+    background: 'linear-gradient(rgb(193, 203, 212), rgb(119, 128, 136)) repeat-x rgb(108, 117, 125)',
+    border: "2px solid rebeccapurple",
+    borderRadius: '10px',
+    boxShadow: '#000000ab 0px 3px 6px 1px',
+    width: '30vw'
+};
+
+export const defaultInputStyle = {
+    height: '24px',
+    width: '150px',
+    fontSize: '16px',
+    backgroundColor: colorPalette.lighter,
+    borderColor: colorPalette.primary,
+    borderRadius: '8px',
+    margin: '4px 0 4px 0',
+
+    outlineColor: colorPalette.accent
+};
+
+export const defaultSubmitStyle = {
+    height: '40px',
+    width: '100px',
+    float: 'right',
+    backgroundColor: colorPalette.primary,
+    outlineColor: colorPalette.primary,
+    color: '#FFF'
+};
+
+export const dashboardStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '25px 4vw',
+    padding: '20px'
+};
+export const tableStyle = {
+    position: 'relative',
+    width: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignSelf: "stretch",
+    margin: '25px 4vw',
+    padding: '15px',
+};
+
+export const createInput = function (attributes) {
+    // create element
+    let field = document.createElement('input');
+    let isSubmit = attributes.type && attributes.type === 'submit';
+    // set attributes
+    for(let qualifiedName in attributes) {
+        field.setAttribute(qualifiedName, attributes[qualifiedName])
+    }
+    setStyle(field, defaultInputStyle);
+
+    if(isSubmit) {
+        setStyle(field, defaultSubmitStyle);
+        field.addEventListener('focus', function () { this.style.backgroundColor = colorPalette.accent; });
+        field.addEventListener('blur', function () { this.style.backgroundColor = colorPalette.primary; });
+        return field;
+    }
+    field.addEventListener('focus', function () { this.style.backgroundColor = colorPalette.light; });
+    field.addEventListener('blur', function () { this.style.backgroundColor = colorPalette.lighter; });
+
+    return field;
+}
+
+export const createRadioInput = function (attributes, options) {
+
+    let fields = [];
+    for(let option of options) {
+        let fieldContainer = document.createElement('div');
+        let label = document.createElement('label');
+        label.innerText = option;
+        label.setAttribute('for', option);
+        let radio = document.createElement('input');
+        // set attributes
+        for(let qualifiedName in attributes) {
+            radio.setAttribute(qualifiedName, attributes[qualifiedName])
+        }
+        radio.setAttribute('id', option);
+        radio.setAttribute('value', option);
+        setStyle(radio, { height: '16px', width: '16px' });
+
+        radio.addEventListener('focus', function () { this.style.backgroundColor = colorPalette.light; });
+        radio.addEventListener('blur', function () { this.style.backgroundColor = colorPalette.lighter; });
+
+        fieldContainer.append(radio, label);
+        fields.push(fieldContainer);
+    }
+
+    return fields;
+}
 
 /**
  *
@@ -77,14 +184,12 @@ export const saveMatch = (playerName, points) => {
         player: playerName,
         points: points
     }
-
     let lastMatches = [];
 
     if(localStorage.getItem('LAST_MATCHES') !== null) {
         lastMatches = JSON.parse(localStorage.getItem('LAST_MATCHES'));
     }
-
-    return localStorage.setItem('LAST_MATCHES', JSON.stringify([ match, ...lastMatches ]));
+    localStorage.setItem('LAST_MATCHES', JSON.stringify([ match, ...lastMatches ]));
 }
 
 /**

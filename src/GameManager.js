@@ -1,24 +1,69 @@
-import Card from './Card'
-import { imageDictionary, saveMatch, shuffle } from './utils'
+import Card from './Card';
+import {imageDictionary, saveMatch, shuffle, tableStyle} from './utils';
+import winImage from './assets/images/win.png';
+import loseImage from './assets/images/lose.png';
 
 const LEFT_SIDE = 'LEFT';
 const RIGHT_SIDE = 'RIGHT';
 
-function GameManager(tableCtx, headerAPI) {
+export const CARD_POINTS = 1000;
+export const TIME_POINTS = 10;
+export const LEVEL_MULTIPLIER = {
+    TIME: {
+        EASY: 7,
+        NORMAL: 5,
+        HARD: 3,
+    },
+    POINTS: {
+        EASY: .75,
+        NORMAL: 1,
+        HARD: 1.25
+    }
+}
+
+
+function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
 
     this.hasStarted = false;
 
-    this.initialCardNumber = 0;
-    this.cardNumber = 0;
     this.remainingCards = 0;
+    this.timer = Math.round(cardsNumber * LEVEL_MULTIPLIER.TIME[level]);
+    headerAPI.timerHandler.setTime(this.timer);
 
     this.matchedCards = [];
 
+
+    let timeWatcher;
+    const startTimer = () => {
+
+        timeWatcher = setInterval(
+            () => {
+
+                if(this.timer <= 0) {
+                    alert('Hai perso!');
+
+                    let tableActualWidth = tableCtx.getBoundingClientRect().width;
+                    tableCtx.innerHTML = '';
+                    let loseImg = document.createElement('img');
+                    loseImg.src = loseImage;
+                    loseImg.alt = 'loseImage';
+                    loseImg.width = tableActualWidth - (parseInt(tableStyle.padding)  * 2);
+
+                    tableCtx.appendChild(loseImg);
+                    stopTimer();
+                    return;
+                }
+                headerAPI.timerHandler.setTime(--this.timer);
+            }, 1000);
+    }
+
+    const stopTimer = function () { clearInterval(timeWatcher); }
+
     this.startGame = function () {
 
-        alert(`Preparati, hai ${ this.initialCardNumber * 10 } secondi da ora per giocare!`);
+        alert(`Preparati, hai ${ this.timer } secondi da ora per giocare!`);
 
-        headerAPI.timerHandler.startTimer();
+        startTimer();
         this.hasStarted = true;
     }
 
@@ -27,9 +72,7 @@ function GameManager(tableCtx, headerAPI) {
         second: undefined
     };
 
-    const resetSelection = () => {
-        currentSelection = { ...selectionInitialState };
-    }
+    const resetSelection = () => currentSelection = { ...selectionInitialState };
 
     const preventSelection = () => {
         clickBlocked = true;
@@ -42,13 +85,11 @@ function GameManager(tableCtx, headerAPI) {
 
     let clickBlocked = false;
 
-    const calculatePoints = function (time, cardsNumber) {
-        return cardsNumber * (100 - time);
-    }
+    const calculatePoints = () => ((cardsNumber * CARD_POINTS) - (TIME_POINTS * this.timer)) * LEVEL_MULTIPLIER.POINTS[level];
 
     this.selectCard = function(card) {
 
-        if(clickBlocked) { return; }
+        if(clickBlocked) return;
 
         if(!this.hasStarted) { this.startGame(); }
 
@@ -74,8 +115,7 @@ function GameManager(tableCtx, headerAPI) {
 
                     resetSelection();
 
-                }, 1000
-            )
+                }, 1000);
             return;
         }
 
@@ -89,18 +129,19 @@ function GameManager(tableCtx, headerAPI) {
                     currentSelection['second'].toggleCard();
 
                     resetSelection();
-                }, 1000
-            )
+                }, 1000);
             return;
         }
 
 
         this.matchedCards.push(card.getName());
-        currentSelection['first'].setMatched();
-        currentSelection['second'].setMatched();
+        setTimeout(() => {
+            currentSelection['first'].setMatched();
+            currentSelection['second'].setMatched();
+            resetSelection();
+        }, 750);
 
         preventSelection();
-        resetSelection();
 
         headerAPI.scoreHandler.incrementScore();
 
@@ -108,12 +149,24 @@ function GameManager(tableCtx, headerAPI) {
 
         headerAPI.scoreHandler.setRemainingCards(this.remainingCards);
 
-        if(this.remainingCards == 0) {
-            headerAPI.timerHandler.stopTimer();
+        // WIN
+        if(this.remainingCards === 0) {
+            stopTimer()
 
-            let username = prompt('Hai vinto!\nInserisci il tuo nome per essere per entrare in classifica:');
+            alert('Complimenti! Hai vinto!');
 
-            saveMatch(username, calculatePoints(headerAPI.timerHandler.time, this.initialCardNumber));
+            saveMatch(username, calculatePoints());
+
+            headerAPI.generateLastMatchBox();
+
+            let tableActualWidth = tableCtx.getBoundingClientRect().width;
+            tableCtx.innerHTML = '';
+            let winImg = document.createElement('img');
+            winImg.src = winImage;
+            winImg.alt = 'winImage';
+            winImg.width = tableActualWidth - (parseInt(tableStyle.padding) * 2);
+
+            tableCtx.appendChild(winImg);
         }
     };
 
@@ -125,20 +178,16 @@ function GameManager(tableCtx, headerAPI) {
         return { leftCard, rightCard };
     }
 
-    this.append = (card) => {
-        card.attach(tableCtx);
-    }
+    this.append = (card) => card.attach(tableCtx);
 
-    this.initTable = function (cardNumber) {
+    this.play = function () {
 
-        this.initialCardNumber = cardNumber;
-        this.cardNumber = cardNumber;
-        this.remainingCards = cardNumber;
-
+        // Set cards
+        this.remainingCards = cardsNumber;
 
         let cards = [];
 
-        for(let i = 0; i < cardNumber; i++) {
+        for(let i = 0; i < cardsNumber; i++) {
 
             let cardPair = this.newCard(`card-${i}`, imageDictionary[`card-${i}`]);
             cards.push(cardPair['leftCard']);

@@ -1,27 +1,21 @@
-import backCard from './assets/images/back-card.jpg'
-import { setStyle } from './utils'
+import backCard from './assets/images/back-card.jpg';
+import {setStyle} from './utils';
 
-const FRONT_FACE = 'FRONT_FACE';
-const BACK_FACE = 'BACK_FACE';
 
 function Card (name, image, side, ctx) {
 
     let cardSide = side;
     let cardName = name;
-    let visibleFace = BACK_FACE;
     let card, cardInner, front, back, frontCardImage, backCardImage;
 
 
     this.getSide = () => cardSide;
     this.getName = () => cardName;
-    this.getVisibleFace = () => visibleFace;
 
     let frontImage = image;
     let backImage = backCard;
 
-    this.toggleCard = () => {
-        cardInner.classList.toggle("flip");
-    }
+    this.toggleCard = () => cardInner.classList.toggle("flip");
 
     this.setMatched = function () {
         // Add fade out transition effect
@@ -79,12 +73,7 @@ function Card (name, image, side, ctx) {
     this.attach = (parentNode) => {
         parentNode.appendChild(card);
     }
-    this.detach = () => {
-        card.parentNode.removeChild(card);
-    }
 
 }
-
-Card.prototype.setStyle = setStyle;
 
 export default Card;

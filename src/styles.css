@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Rubik';
+    src:  url('./assets/fonts/rubik.ttf') format('ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+
 /* The flip box container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
 .flip-box {
     background-color: transparent;
@@ -55,23 +62,6 @@
 }
 
 
-
-
-.ribbon-wrapper {
-    height: 70px;
-    overflow: hidden;
-    position: absolute;
-    right: -2px;
-    top: -2px;
-    width: 70px;
-    z-index: 10;
-}
-.ribbon-wrapper.ribbon-lg {
-    height: 120px;
-    width: 120px;
-}
-
-
 .fade-out {
     animation: fadeOut ease 1s;
     -webkit-animation: fadeOut ease 1s;
@@ -79,6 +69,7 @@
     -o-animation: fadeOut ease 1s;
     -ms-animation: fadeOut ease 1s;
 }
+
 @keyframes fadeOut {
     0% {
         opacity:1;

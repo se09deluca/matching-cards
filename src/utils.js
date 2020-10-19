@@ -44,6 +44,8 @@ export const imageDictionary = {
     "card-20": cardImage20
 };
 
+export const imageIndexes = Array(Object.keys(imageDictionary).length).fill(0).map((a, i) => a + i);
+
 export const colorPalette = {
     primary: '#7230b3',
     accent: '#ca04ca',
@@ -198,7 +200,7 @@ export const saveMatch = (playerName, points) => {
  * @returns {*}
  */
 export const shuffle = (array) => {
-    var m = array.length, t, i;
+    let m = array.length, t, i;
 
     // While there remain elements to shuffle…
     while (m) {
@@ -215,4 +217,23 @@ export const shuffle = (array) => {
     return array;
 }
 
+export function takeNRandom(arr, num) {
+    // create a clone of the array so we do not modify the original
+    let clone = arr.slice(0);
+    let result = [];
+
+    for (let i = 0; i < Math.min(num, clone.length); i++) {
+        let random = Math.floor(Math.random() * clone.length);
+        // splice value at "num"
+        // this returns an array with 1 item so we take its first value
+        // this modifies the array so the value no longer exists in it
+        // so we do not have to worry about picking it again
+        let item = clone.splice(random, 1)[0];
+
+        // then push it to the result array
+        result.push(item);
+    }
+
+    return result;
+}
 

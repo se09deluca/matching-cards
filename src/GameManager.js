@@ -1,5 +1,14 @@
 import Card from './Card';
-import {imageDictionary, saveMatch, shuffle, tableStyle} from './utils';
+import {
+    colorPalette,
+    imageDictionary,
+    imageIndexes,
+    saveMatch,
+    setStyle,
+    shuffle,
+    tableStyle,
+    takeNRandom
+} from './utils';
 import winImage from './assets/images/win.png';
 import loseImage from './assets/images/lose.png';
 
@@ -7,7 +16,7 @@ const LEFT_SIDE = 'LEFT';
 const RIGHT_SIDE = 'RIGHT';
 
 export const CARD_POINTS = 1000;
-export const TIME_POINTS = 10;
+export const TIME_POINTS = 50;
 export const LEVEL_MULTIPLIER = {
     TIME: {
         EASY: 7,
@@ -27,11 +36,13 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
     this.hasStarted = false;
 
     this.remainingCards = 0;
-    this.timer = Math.round(cardsNumber * LEVEL_MULTIPLIER.TIME[level]);
-    headerAPI.timerHandler.setTime(this.timer);
 
     this.matchedCards = [];
 
+    const getInitialTime = function () { return Math.round(cardsNumber * LEVEL_MULTIPLIER.TIME[level]); }
+
+    this.timer = getInitialTime();
+    headerAPI.timerHandler.setTime(this.timer);
 
     let timeWatcher;
     const startTimer = () => {
@@ -47,9 +58,15 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
                     let loseImg = document.createElement('img');
                     loseImg.src = loseImage;
                     loseImg.alt = 'loseImage';
-                    loseImg.width = tableActualWidth - (parseInt(tableStyle.padding)  * 2);
+                    setStyle(loseImg, {
+                        width: `${ tableActualWidth - (parseInt(tableStyle.padding) * 2) }px`,
+                        height: '70vh',
+                        objectFit: 'contain'
+                    });
 
-                    tableCtx.appendChild(loseImg);
+                    const restartBtn = generateRestartBtn();
+
+                    tableCtx.append(loseImg, restartBtn);
                     stopTimer();
                     return;
                 }
@@ -85,7 +102,7 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
 
     let clickBlocked = false;
 
-    const calculatePoints = () => ((cardsNumber * CARD_POINTS) - (TIME_POINTS * this.timer)) * LEVEL_MULTIPLIER.POINTS[level];
+    const calculatePoints = () => ((cardsNumber * CARD_POINTS) - (TIME_POINTS * (getInitialTime() - this.timer))) * LEVEL_MULTIPLIER.POINTS[level];
 
     this.selectCard = function(card) {
 
@@ -151,22 +168,31 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
 
         // WIN
         if(this.remainingCards === 0) {
-            stopTimer()
-
-            alert('Complimenti! Hai vinto!');
-
+            stopTimer();
             saveMatch(username, calculatePoints());
 
-            headerAPI.generateLastMatchBox();
+            setTimeout(function () {
 
-            let tableActualWidth = tableCtx.getBoundingClientRect().width;
-            tableCtx.innerHTML = '';
-            let winImg = document.createElement('img');
-            winImg.src = winImage;
-            winImg.alt = 'winImage';
-            winImg.width = tableActualWidth - (parseInt(tableStyle.padding) * 2);
+                alert('Complimenti! Hai vinto!');
 
-            tableCtx.appendChild(winImg);
+                headerAPI.generateLastMatchBox();
+
+                let tableActualWidth = tableCtx.getBoundingClientRect().width;
+                tableCtx.innerHTML = '';
+                let winImg = document.createElement('img');
+                winImg.src = winImage;
+                winImg.alt = 'winImage';
+                setStyle(winImg, {
+                    width: `${ tableActualWidth - (parseInt(tableStyle.padding) * 2) }px`,
+                    height: '70vh',
+                    objectFit: 'contain'
+                });
+
+
+                const restartBtn = generateRestartBtn();
+
+                tableCtx.append(winImg, restartBtn);
+            }, 1000);
         }
     };
 
@@ -187,21 +213,41 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
 
         let cards = [];
 
-        for(let i = 0; i < cardsNumber; i++) {
-
-            let cardPair = this.newCard(`card-${i}`, imageDictionary[`card-${i}`]);
+        // take n random indexes to get n random card's images from a dictionary of pictures
+        let deck = takeNRandom(imageIndexes, cardsNumber);
+        for(let card of deck) {
+            let cardPair = this.newCard(`card-${card}`, imageDictionary[`card-${card}`]);
             cards.push(cardPair['leftCard']);
             cards.push(cardPair['rightCard']);
         }
 
+        // Mix up the couples of cards
         cards = shuffle(cards);
-
         for(let card of cards) {
             this.append( card );
         }
 
     }
 
+}
+
+function generateRestartBtn () {
+    let restartBtn = document.createElement('button');
+    restartBtn.innerText = "Cominicia una nuova partita!";
+    setStyle(restartBtn, {
+        height: 'fit-content',
+        padding: '8px',
+        borderRadius: '8px',
+        backgroundColor: colorPalette.primary,
+        color: 'white',
+        fontSize: '18px',
+        fontWeight: 'bold'
+    });
+    restartBtn.addEventListener('click', function () {
+        let restartGameEvent = new Event("restartGame");
+        dispatchEvent(restartGameEvent);
+    });
+    return restartBtn;
 }
 
 export default GameManager;

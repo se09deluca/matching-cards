@@ -8,7 +8,6 @@ function Card (name, image, side, ctx) {
     let cardName = name;
     let card, cardInner, front, back, frontCardImage, backCardImage;
 
-
     this.getSide = () => cardSide;
     this.getName = () => cardName;
 

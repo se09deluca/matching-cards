@@ -4,8 +4,7 @@ import {
     createInput,
     createRadioInput,
     dashboardStyle,
-    defaultBoxStyle,
-    fontFamily,
+    defaultBoxStyle, fontFamily,
     getAllMatches,
     setStyle,
     tableStyle
@@ -18,10 +17,14 @@ const onLoadListener = () => {
     setStyle(document.body,{ backgroundImage: `url(${ tableBackgroundImage })` });
 
     let container = document.getElementById('root');
-    setStyle(container,{ display: 'flex', justifyContent: 'center', fontFamily });
+    setStyle(container,{
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        position: 'fixed', overflow: 'scroll', top: 0, left: 0, right: 0, bottom: 0,
+        fontFamily
+    });
 
     let gameFormContainer = document.createElement('div');
-    setStyle(gameFormContainer, { ...defaultBoxStyle, width: '40vw' });
+    setStyle(gameFormContainer, { ...defaultBoxStyle, width: '40vw', height: 'fit-content' });
 
     let startGameForm = document.createElement('form');
     startGameForm.onsubmit = function (ev) {
@@ -30,7 +33,6 @@ const onLoadListener = () => {
         this.elements['level'].value
         let result = {};
         for(let element of [ 'username', 'cardsNumber', 'level' ]) {
-            console.log(element)
             result[element] = this.elements[element].value;
         }
 
@@ -45,14 +47,11 @@ const onLoadListener = () => {
     title.innerText = "Matching cards";
 
     let infoTitle = document.createElement('span');
-    setStyle(infoTitle, {
-        fontSize: '18px',
-        fontWeight: 'bold'
-    });
+    setStyle(infoTitle, { fontSize: '18px', fontWeight: 'bold' });
     infoTitle.innerText = "Istruzioni";
 
     let info = document.createElement('p');
-    info.innerText = "Matching cards è un memory game in cui l'obiettivo è essere il più veloce possibile. Scala la classifica grazie alla tua memoria visiva.!"
+    info.innerText = `Matching cards è un memory game in cui l'obiettivo è essere il più veloce possibile.\nScala la classifica grazie alla tua memoria visiva!\n\nOgni coppia di carte vale ${ CARD_POINTS } punti.\nSe scegli il livello difficile, guadagnerai più punti,ma avrai anche meno tempo! 😈😈`;
 
     let divider = document.createElement('hr');
     setStyle(divider, { borderColor: colorPalette.primary });
@@ -120,16 +119,7 @@ function startGame(gameConfig) {
 
     let container = document.getElementById('root');
     container.innerHTML = '';
-
-    setStyle(container, {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: 'scroll'
-    });
-
+    setStyle(container, { alignItems: 'inherit' });
 
     let dashboard = document.createElement('div');
 
@@ -185,18 +175,13 @@ function startGame(gameConfig) {
         function setScore(score) { scoreValueComponent.innerText = score.toString(); }
         setScore(0);
 
-        function decrementScore() { setScore(--score); }
-
         function incrementScore() { setScore(++score); }
 
         let remainingCardsTitle = document.createElement('span');
         setStyle(remainingCardsTitle, { float: 'right', display: 'none', fontSize: 18, fontWeight: 'bold', marginTop: '5px' });
         remainingCardsTitle.innerHTML = `Carte restanti: <span id="remainingCards"></span>`;
 
-        let pointsLegend = document.createElement('p');
-        pointsLegend.innerHTML = `Ogni coppia di carte vale ${ CARD_POINTS } punti.<br/>Ma affrettati, ogni secondo ti costa ${ TIME_POINTS } punti!`;
-
-        scoreBox.append(remainingCardsTitle, pointsLegend);
+        scoreBox.append(remainingCardsTitle);
 
         let remainingCardsComponent = document.getElementById('remainingCards');
         function setRemainingCards(cardsNumber) {
@@ -345,3 +330,9 @@ window.addEventListener(
     'load',
     onLoadListener
 );
+
+window.addEventListener('restartGame', function () {
+    let container = document.getElementById('root');
+    container.innerHTML = '';
+    dispatchEvent(new Event("load"));
+});

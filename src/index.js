@@ -1,10 +1,11 @@
-import GameManager, {CARD_POINTS, TIME_POINTS} from './GameManager';
+import GameManager, {CARD_POINTS} from './GameManager';
 import {
     colorPalette,
     createInput,
     createRadioInput,
     dashboardStyle,
-    defaultBoxStyle, fontFamily,
+    defaultBoxStyle,
+    fontFamily,
     getAllMatches,
     setStyle,
     tableStyle
@@ -12,7 +13,7 @@ import {
 import tableBackgroundImage from '../src/assets/images/table-bg.jpg';
 import '../src/styles.css';
 
-const onLoadListener = () => {
+const onLoadListener = function () {
 
     setStyle(document.body,{ backgroundImage: `url(${ tableBackgroundImage })` });
 
@@ -309,16 +310,9 @@ function startGame(gameConfig) {
 
 
 
-
-
-
-
-
-
     let table = document.createElement('div');
     setStyle(table, tableStyle);
     container.appendChild(table);
-
 
     let gameManager = new GameManager(table, header, gameConfig);
 

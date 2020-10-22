@@ -204,7 +204,9 @@ function GameManager(tableCtx, headerAPI, { username, cardsNumber, level }) {
         return { leftCard, rightCard };
     }
 
-    this.append = (card) => card.attach(tableCtx);
+    this.append = function (card) {
+        card.attach(tableCtx);
+    };
 
     this.play = function () {
 

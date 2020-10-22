@@ -14,7 +14,9 @@ function Card (name, image, side, ctx) {
     let frontImage = image;
     let backImage = backCard;
 
-    this.toggleCard = () => cardInner.classList.toggle("flip");
+    this.toggleCard = function () {
+        cardInner.classList.toggle("flip");
+    }
 
     this.setMatched = function () {
         // Add fade out transition effect

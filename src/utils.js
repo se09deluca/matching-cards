@@ -20,7 +20,7 @@ import cardImage18 from "../src/assets/images/card-18.jpg";
 import cardImage19 from "../src/assets/images/card-19.jpg";
 import cardImage20 from "../src/assets/images/card-20.jpg";
 
-export const imageDictionary = {
+const imageDictionary = {
     "card-0": cardImage0,
     "card-1": cardImage1,
     "card-2": cardImage2,
@@ -44,24 +44,24 @@ export const imageDictionary = {
     "card-20": cardImage20
 };
 
-export const imageIndexes = Array(Object.keys(imageDictionary).length).fill(0).map((a, i) => a + i);
+const imageIndexes = Array(Object.keys(imageDictionary).length).fill(0).map((a, i) => a + i);
 
-export const colorPalette = {
+const colorPalette = {
     primary: '#7230b3',
     accent: '#ca04ca',
     light: '#f3d6ff',
     lighter: '#d3d3d3'
 }
 
-export const fontFamily = 'Rubik';
+const fontFamily = 'Rubik';
 
-export const setStyle = (elem, style) => {
+const setStyle = (elem, style) => {
     for(let property in style) {
         elem.style[property] = style[property];
     }
 };
 
-export const defaultBoxStyle = {
+const defaultBoxStyle = {
     padding: '20px',
     marginBottom: '20px',
     background: 'linear-gradient(rgb(193, 203, 212), rgb(119, 128, 136)) repeat-x rgb(108, 117, 125)',
@@ -71,7 +71,7 @@ export const defaultBoxStyle = {
     width: '30vw'
 };
 
-export const defaultInputStyle = {
+const defaultInputStyle = {
     height: '24px',
     width: '150px',
     fontSize: '16px',
@@ -83,7 +83,7 @@ export const defaultInputStyle = {
     outlineColor: colorPalette.accent
 };
 
-export const defaultSubmitStyle = {
+const defaultSubmitStyle = {
     height: '40px',
     width: '100px',
     float: 'right',
@@ -92,13 +92,14 @@ export const defaultSubmitStyle = {
     color: '#FFF'
 };
 
-export const dashboardStyle = {
+const dashboardStyle = {
     display: 'flex',
     flexDirection: 'column',
     margin: '25px 4vw',
     padding: '20px'
 };
-export const tableStyle = {
+
+const tableStyle = {
     position: 'relative',
     width: 'auto',
     display: 'flex',
@@ -110,7 +111,7 @@ export const tableStyle = {
     padding: '15px',
 };
 
-export const createInput = function (attributes) {
+const createInput = function (attributes) {
     // create element
     let field = document.createElement('input');
     let isSubmit = attributes.type && attributes.type === 'submit';
@@ -132,7 +133,7 @@ export const createInput = function (attributes) {
     return field;
 }
 
-export const createRadioInput = function (attributes, options) {
+const createRadioInput = function (attributes, options) {
 
     let fields = [];
     for(let option of options) {
@@ -163,7 +164,7 @@ export const createRadioInput = function (attributes, options) {
  *
  * @returns {string}
  */
-export const getAllMatches = () => {
+const getAllMatches = function () {
 
     let lastMatches = localStorage.getItem('LAST_MATCHES');
 
@@ -179,7 +180,7 @@ export const getAllMatches = () => {
  * @param playerName
  * @param points
  */
-export const saveMatch = (playerName, points) => {
+const saveMatch = function (playerName, points) {
 
     let match = {
         date: Date.now(),
@@ -199,7 +200,7 @@ export const saveMatch = (playerName, points) => {
  * @param array
  * @returns {*}
  */
-export const shuffle = (array) => {
+const shuffle = function (array) {
     let m = array.length, t, i;
 
     // While there remain elements to shuffle…
@@ -217,7 +218,7 @@ export const shuffle = (array) => {
     return array;
 }
 
-export function takeNRandom(arr, num) {
+const takeNRandom = function (arr, num) {
     // create a clone of the array so we do not modify the original
     let clone = arr.slice(0);
     let result = [];
@@ -237,3 +238,21 @@ export function takeNRandom(arr, num) {
     return result;
 }
 
+export {
+    imageDictionary,
+    imageIndexes,
+    colorPalette,
+    fontFamily,
+    defaultBoxStyle,
+    defaultInputStyle,
+    defaultSubmitStyle,
+    dashboardStyle,
+    tableStyle,
+    setStyle,
+    createInput,
+    createRadioInput,
+    getAllMatches,
+    saveMatch,
+    shuffle,
+    takeNRandom
+}

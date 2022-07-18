@@ -7,7 +7,13 @@
     "build": "webpack --config webpack.prod.js ",
     "start": "webpack --config webpack.dev.js --watch"
   },
-  "keywords": ["memory game", "memory", "game", "cards", "match"],
+  "keywords": [
+    "memory game",
+    "memory",
+    "game",
+    "cards",
+    "match"
+  ],
   "author": "Andrea De Luca",
   "license": "ISC",
   "devDependencies": {

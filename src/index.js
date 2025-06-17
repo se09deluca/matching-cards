@@ -150,10 +150,15 @@ function startGame(gameConfig) {
             marginTop: '0',
             fontSize: '28px'
         });
-        title.innerHTML = `Ciao ${ gameConfig.username }!`;
+        title.textContent = `Ciao ${ gameConfig.username }!`;
 
         let subtitle = document.createElement('p');
-        subtitle.innerHTML = `Benvenuto nel memory game, cerca di battere il record accoppiando tutte le carte nel minor tempo possibile!<br/>Il timer inizia al tocco della prima carta.<br/><br/>Buona fortuna!`;
+        subtitle.appendChild(document.createTextNode('Benvenuto nel memory game, cerca di battere il record accoppiando tutte le carte nel minor tempo possibile!'));
+        subtitle.appendChild(document.createElement('br'));
+        subtitle.appendChild(document.createTextNode('Il timer inizia al tocco della prima carta.'));
+        subtitle.appendChild(document.createElement('br'));
+        subtitle.appendChild(document.createElement('br'));
+        subtitle.appendChild(document.createTextNode('Buona fortuna!'));
 
         infoBox.appendChild(title);
         infoBox.appendChild(subtitle);
